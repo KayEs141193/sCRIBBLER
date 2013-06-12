@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+	<head>
+		<title>
+			sCRIBBLER
+		</title>
+
+		<script src="http://localhost:9000/socket.io/socket.io.js"></script> 
+
+
+		<script type="text/javascript">
+
+
+			window.addEventListener("load",eventWindowLoaded,false);
+
+			var canvas;
+			var context;
+			var con;
+
+			function eventWindowLoaded(){ 
+
+				socket_starter();
+
+				canvasApp();
+
+			} //App Begins When Window Loads
+
+
+			function socket_starter()
+			{
+
+				con = io.connect("http://localhost:9000/scribble");
+
+				con.on("message",server_draw);
+
+				con.on("error",function(){});
+
+			}
+
+
+			function server_draw(e)
+			{
+				var ob=JSON.parse(e.data);
+
+				/*
+				switch(ob.des)
+				{
+				  '1':context.beginPath();
+					context.moveTo(ob.x,oby);
+					break;
+				  
+				  '2':context.lineTo(ob.x,ob.y);
+					context.stroke();
+					break;
+				}
+				*/
+			}
+
+			function canvasApp()
+			{
+
+
+				canvas=document.getElementById("canv");
+				context=canvas.getContext("2d");
+
+
+
+				canvas.addEventListener("mousedown",begin,false);
+				canvas.addEventListener("mouseup",end,false);
+
+			function end(e)
+			{
+
+
+				canvas.removeEventListener("mousemove",draw,false);
+				con.on("message",server_draw);
+
+			}
+
+			function draw(e)
+			{
+
+				canvas.removeEventListener("mousemove",draw,false);
+				var posx = 0;
+				var posy = 0;
+
+				if (e.pageX || e.pageY) 	{
+					posx = e.pageX;
+					posy = e.pageY;
+				}
+				else if (e.clientX || e.clientY) 	{
+					posx = e.clientX + document.body.scrollLeft
+						+ document.documentElement.scrollLeft;
+					posy = e.clientY + document.body.scrollTop
+						+ document.documentElement.scrollTop;
+				}
+				
+				context.lineTo(posx,posy);
+				context.stroke();
+				
+				canvas.addEventListener("mousemove",draw,false);
+
+			}
+
+			function begin(e)
+			{
+				var posx = 0;
+				var posy = 0;
+
+				if (e.pageX || e.pageY) 	{
+					posx = e.pageX;
+					posy = e.pageY;
+				}
+				else if (e.clientX || e.clientY) 	{
+					posx = e.clientX + document.body.scrollLeft
+						+ document.documentElement.scrollLeft;
+					posy = e.clientY + document.body.scrollTop
+						+ document.documentElement.scrollTop;
+				}
+				
+				con.removeListener("message",server_draw);
+				
+				context.beginPath;
+				context.moveTo(posx,posy);
+				
+				canvas.addEventListener("mousemove",draw,false);
+			//	APPLICATION NO.L130043997
+			//	113061188959835
+				
+				
+			}
+
+
+
+			}
+
+		</script>
+
+	</head>
+
+
+	<body>
+		<canvas height="600" width="600" id="canv" style="border-style:solid;border-color:black;border-width:2px;cursor:crosshair;">Fuck IE</canvas>
+
+
+	</body>
+
+
+</html>
