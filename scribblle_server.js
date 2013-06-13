@@ -15,7 +15,7 @@
 			
 	function handler(req,res){
 
-		fs.readFile('/COMPUSTUFF/sCRIBBLER/main.html',function(err,file){
+		fs.readFile('./main.html',function(err,file){
 		
 			if(err){
 			
@@ -27,16 +27,31 @@
 			
 			res.writeHead(200,{'Context-Type':'text/html'});
 			res.write(file);
+			res.end();
 		
 		})
 		
 		
 
 	}
-	/*
+	
 	scribble.on('connection',function(socket){
 	
-		console.log(scribble.clients());	
+		console.log(scribble.clients().length);	
+		
+		socket.on("allover",function(){console.log("all Over!")});
+		
+		socket.on("end",function(){console.log("CLOSED");});
+		socket.on("error",function(){console.log("Error");});
+		
+		socket.on("draw",function(ob){
+		
+			socket.broadcast.emit("draw_now",ob);
+		
+		})
+		
+		//PASS:#KayEs~8.543
+	});
 	
-	})
-	*/
+	scribble.on("error",function(){console.log("Error2");});
+	

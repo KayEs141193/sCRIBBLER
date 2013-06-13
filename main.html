@@ -4,18 +4,20 @@
 		<title>
 			sCRIBBLER
 		</title>
+		
+		<meta charset="UTF-8">
 
 		<script src="http://localhost:9000/socket.io/socket.io.js"></script> 
 
 
 		<script type="text/javascript">
 		
-			alert("first alert");
+			
 
 
 			window.addEventListener("load",eventWindowLoaded,false);
 			
-			alert("second alert");
+			
 
 			var canvas;
 			var context;
@@ -34,30 +36,36 @@
 			{
 
 				con = io.connect("http://localhost:9000/scribble");
+				
+				window.addEventListener('unload',function(){con.emit("allover");},false);
 
-				con.on("message",server_draw);
+				con.on("draw_now",server_draw);
 
-				con.on("error",function(){});
-
+				con.on("error",function(){console.log("Problem")});
+				
+				
 			}
 
 
-			function server_draw(e)
+			function server_draw(ob)
 			{
-				var ob=JSON.parse(e.data);
+				
 
-				/*
+				
 				switch(ob.des)
 				{
-				  '1':context.beginPath();
-					context.moveTo(ob.x,oby);
+				  case '1':context.beginPath();
+					context.moveTo(ob.x,ob.y);
 					break;
 				  
-				  '2':context.lineTo(ob.x,ob.y);
+				  case '2':context.lineTo(ob.x,ob.y);
 					context.stroke();
 					break;
+					
+					case '3':break;
+					
 				}
-				*/
+				
 			}
 
 			function canvasApp()
@@ -75,9 +83,9 @@
 			function end(e)
 			{
 
-
+				con.emit('draw',{'des':'3','x':'','y':''});
 				canvas.removeEventListener("mousemove",draw,false);
-				con.on("message",server_draw);
+				con.on("draw_now",server_draw);
 
 			}
 
@@ -102,7 +110,10 @@
 				context.lineTo(posx,posy);
 				context.stroke();
 				
+				con.emit('draw',{'des':'2','x':posx,'y':posy});
+				
 				canvas.addEventListener("mousemove",draw,false);
+				
 
 			}
 
@@ -122,7 +133,8 @@
 						+ document.documentElement.scrollTop;
 				}
 				
-				con.removeListener("message",server_draw);
+				con.removeListener("draw_now",server_draw);
+				con.emit('draw',{'des':'1','x':posx,'y':posy});
 				
 				context.beginPath;
 				context.moveTo(posx,posy);
