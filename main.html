@@ -7,7 +7,7 @@
 		
 		<meta charset="UTF-8">
 
-		<script src="http://localhost:9000/socket.io/socket.io.js"></script> 
+		<script src="./socket.io/socket.io.js"></script> 
 
 
 		<script type="text/javascript">
@@ -35,7 +35,7 @@
 			function socket_starter()
 			{
 
-				con = io.connect("http://localhost:9000/scribble");
+				con = io.connect("/scribble");
 				
 				window.addEventListener('unload',function(){con.emit("allover");},false);
 
